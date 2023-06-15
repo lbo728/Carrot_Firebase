@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+      <link href="main.css" rel="stylesheet">
+    <title>Carrot</title>
+  </head>
+  <body>
+      <script src="/__/firebase/8.6.5/firebase-app.js"></script>
+      <script src="/__/firebase/8.6.5/firebase-auth.js"></script>
+      <script src="/__/firebase/8.6.5/firebase-firestore.js"></script>
+      <script src="/__/firebase/8.6.5/firebase-storage.js"></script>
+      <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+          apiKey: "AIzaSyAHS8YnkUTaJn9vlTlKjs-B3eT44EIC3xs",
+          authDomain: "carrot-7f793.firebaseapp.com",
+          projectId: "carrot-7f793",
+          storageBucket: "carrot-7f793.appspot.com",
+          messagingSenderId: "1065305635464",
+          appId: "1:1065305635464:web:3a0bcfdf01b08c675f7d3d"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+      </script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+      <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+      <script>
+        const db = firebase.firestore();
+        db.collection('product').get().then((결과)=>{
+          결과.forEach((doc)=>{
+            console.log(doc.data())
+            var 템플릿 = `<div class="product">
+              <div class="thumbnail" style="background-image: url('https://via.placeholder.com/350')"></div>
+              <div class="flex-grow-1 p-4">
+                <h5 class="title">${doc.data().제목}</h5>
+                <p class="date">2030년 1월 8일</p>
+                <p class="price">${doc.data().가격}</p>
+                <p class="float-end">🧡 0</p>
+              </div>
+            </div>`;
+            $('.container').append(템플릿)
+          })
+        })
+      </script>
+
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">CarrotMarket</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Dropdown
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled">Disabled</a>
+              </li>
+          </div>
+        </div>
+      </nav>
+      <div class="container mt-3">
+      
+      </div>
+  </body>
+</html>
