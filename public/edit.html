@@ -59,10 +59,11 @@
   </nav>
   <!-- Upload Form -->
   <div class="container mt-3">
-    <input type="text" class="form-control mt-2" id="title" placeholder="상품 이름을 입력해주세요.">
+    <input type="text" class="form-control mt-2" id="title" placeholder="상품 이름을 입력해주세요." val="기본 제목">
     <textarea class="form-control mt-2" id="content" placeholder="상품 설명을 입력해주세요."></textarea>
-    <input type="text" class="form-control mt-2" id="price" placeholder="상품 가격을 입력해주세요.">
+    <input type="text" class="form-control mt-2" id="price" placeholder="상품 가격을 입력해주세요." val="기본 가격">
     <input class="form-control mt-2" type="file" id="image">
+    <div class="detail-pic my-4" style="background-image: url('https://placeimg.com/640/380/tech');"></div>
     <button class="btn btn-danger mt-3" id="edit">
       수정하기
     </button>
@@ -88,50 +89,28 @@
 
     db.collection('product').doc(쿼리스트링.get('id')).get().then((result) => {
       console.log(result.data())
-      $('#title').html(result.data().제목)
+      $('#title').val(result.data().제목)
       $('#content').html(result.data().내용)
-      // $('#price').value.html(result.data().가격)
-      // $('.detail-pic').css('background-image', `url(${result.data().이미지})`)
+      $('#price').val(result.data().가격)
+      $('.detail-pic').css('background-image', `url(${result.data().이미지})`)
     })
 
     $('#edit').click(function () {
-
       var file = document.querySelector('#image').files[0];
       var storageRef = storage.ref();
       var 저장할경로 = storageRef.child('image/' + file.name);
       var 업로드작업 = 저장할경로.put(file)
 
-      업로드작업.on('state_change',
-        // 변화시 동작하는 함수
-        null,
-        // 에러시 동작하는 함수
-        (error) => {
-          console.error('실패사유는', error);
-        },
-        // 성공시 동작하는 함수
-        () => {
-          업로드작업.snapshot.ref.getDownloadURL().then((url) => {
-            console.log('업로드된 경로는', url);
-            var 저장할거 = {
-              제목: $('#title').val(),
-              가격: $('#price').val(),
-              내용: $('#content').val(),
-              날짜: new Date(),
-              이미지: url,
-              uid: JSON.parse(localStorage.getItem('user')).uid,
-              이름: JSON.parse(localStorage.getItem('user')).displayName
-            }
-            db.collection('product').add(저장할거).then((result) => {
-              console.log(result.id);
-              window.location.href = "/index.html"
-            }).catch((err) => {
-              console.log(err)
-            })
-          });
-        }
-      )
-    })
+      var 바꿀거 = {
+        제목 : $('#title').val(),
+        내용 : $('#content').val(),
+        가격 : $('#price').val(),
+        날짜: new Date(),
+        // 이미지: url,
+      }
 
+      db.collection('product').doc(쿼리스트링.get('id')).update(바꿀거)
+    })
   </script>
 
 </body>
