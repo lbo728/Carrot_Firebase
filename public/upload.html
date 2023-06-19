@@ -69,7 +69,7 @@
         placeholder="상품 설명을 입력해주세요.">
       </textarea>
       <input 
-        type="number" 
+        type="text" 
         class="form-control mt-2" 
         id="price" 
         placeholder="상품 가격을 입력해주세요.">
@@ -87,6 +87,19 @@
     <script>
       const db = firebase.firestore();
       const storage = firebase.storage();
+
+      const inputPrice = document.querySelector('#price');
+      inputPrice.addEventListener('keyup', function (e) {
+        let value = e.target.value;
+        value = Number(value.replaceAll(',', ''));
+         if (isNaN(value)) {         //NaN인지 판별
+          inputPrice.value = 0;
+        } else {                   //NaN이 아닌 경우
+          const formatValue = value.toLocaleString('ko-KR');
+          inputPrice.value = formatValue;
+        }
+      })
+
 
       $('#send').click(function () {
 
@@ -112,6 +125,8 @@
                 내용 : $('#content').val(),
                 날짜 : new Date(),
                 이미지 : url,
+                uid : JSON.parse(localStorage.getItem('user')).uid,
+                이름 : JSON.parse(localStorage.getItem('user')).displayName
               }
               db.collection('product').add(저장할거).then((result) => {
                 console.log(result.id);
@@ -121,7 +136,7 @@
               })
             });
           }
-          )
+        )
       })
     </script>
 

@@ -89,26 +89,26 @@
       const db = firebase.firestore();
       const storage = firebase.storage();
 
-      // 유저정보 확인
-      var 뺀거 = localStorage.getItem('user')
-      $('#userName').html(JSON.parse(뺀거).displayName)
-
-      firebase.auth().onAuthStateChanged((user)=>{
-        if (user) {
-          console.log(user)
-          console.log(user.uid)
-          console.log(user.displayName)
-          localStorage.setItem('user', JSON.stringify(user))
-          
-        }
-      })
-
       $('#login').click(function () {
         var 이메일 = $('#email').val();
         var 패스워드 = $('#pw').val();
         firebase.auth().signInWithEmailAndPassword(이메일, 패스워드).then((result) => {
           console.log(result.user)
         })
+      })
+
+      // 유저정보 확인
+      var 뺀거 = localStorage.getItem('user')
+      $('#userName').html(JSON.parse(뺀거).displayName)
+
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          console.log(user)
+          console.log(user.uid)
+          console.log(user.displayName)
+          localStorage.setItem('user', JSON.stringify(user))
+
+        }
       })
 
       $('#logout').click(function () {

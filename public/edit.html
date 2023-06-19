@@ -34,13 +34,6 @@
     crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"
     integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-  <script>
-    dayjs().format()
-  </script>
-
-
-
 
   <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -64,47 +57,79 @@
       </div>
     </div>
   </nav>
-
-  <!-- Detail Form -->
-  <div class="container">
-    상세페이지임
-    <button id="edit">수정</button>
-    <div class="detail-pic my-4" style="background-image: url('https://placeimg.com/640/380/tech');"></div>
-    <div>
-      <h5 class="title">상품명</h5>
-      <hr>
-      <span id="user">모름</span>
-      <div class="date">올린날짜</div>
-      <div>
-        <span id="price">가격</span>
-        원
-      </div>
-      <h3 class="mt-3" id="content">내용임</h3>
-    </div>
+  <!-- Upload Form -->
+  <div class="container mt-3">
+    <input type="text" class="form-control mt-2" id="title" placeholder="상품 이름을 입력해주세요.">
+    <textarea class="form-control mt-2" id="content" placeholder="상품 설명을 입력해주세요."></textarea>
+    <input type="text" class="form-control mt-2" id="price" placeholder="상품 가격을 입력해주세요.">
+    <input class="form-control mt-2" type="file" id="image">
+    <button class="btn btn-danger mt-3" id="edit">
+      수정하기
+    </button>
   </div>
-  
-
   <!-- Sending Data To FireBase -->
   <script>
     const db = firebase.firestore();
     const storage = firebase.storage();
 
+    const inputPrice = document.querySelector('#price');
+      inputPrice.addEventListener('keyup', function (e) {
+        let value = e.target.value;
+        value = Number(value.replaceAll(',', ''));
+        if (isNaN(value)) {         //NaN인지 판별
+          inputPrice.value = 0;
+        } else {                   //NaN이 아닌 경우
+          const formatValue = value.toLocaleString('ko-KR');
+          inputPrice.value = formatValue;
+        }
+      })
+
     var 쿼리스트링 = new URLSearchParams(window.location.search);
 
-    db.collection('product').doc(쿼리스트링.get('id')).get().then((result)=>{
+    db.collection('product').doc(쿼리스트링.get('id')).get().then((result) => {
       console.log(result.data())
-      var date = new dayjs(result.data().날짜.toDate()).format('YYYY년 MM월 DD일');
-      
-      $('#user').html(result.data().이름)
-      $('.title').html(result.data().제목)
-      $('.date').html(date)
-      $('#price').html(result.data().가격.toLocaleString())
+      $('#title').html(result.data().제목)
       $('#content').html(result.data().내용)
-      $('.detail-pic').css('background-image', `url(${result.data().이미지})`)
+      // $('#price').value.html(result.data().가격)
+      // $('.detail-pic').css('background-image', `url(${result.data().이미지})`)
     })
-    
-    $('#edit').click(function(){
-      window.location.href = '/edit.html?id=' + 쿼리스트링.get('id')
+
+    $('#edit').click(function () {
+
+      var file = document.querySelector('#image').files[0];
+      var storageRef = storage.ref();
+      var 저장할경로 = storageRef.child('image/' + file.name);
+      var 업로드작업 = 저장할경로.put(file)
+
+      업로드작업.on('state_change',
+        // 변화시 동작하는 함수
+        null,
+        // 에러시 동작하는 함수
+        (error) => {
+          console.error('실패사유는', error);
+        },
+        // 성공시 동작하는 함수
+        () => {
+          업로드작업.snapshot.ref.getDownloadURL().then((url) => {
+            console.log('업로드된 경로는', url);
+            var 저장할거 = {
+              제목: $('#title').val(),
+              가격: $('#price').val(),
+              내용: $('#content').val(),
+              날짜: new Date(),
+              이미지: url,
+              uid: JSON.parse(localStorage.getItem('user')).uid,
+              이름: JSON.parse(localStorage.getItem('user')).displayName
+            }
+            db.collection('product').add(저장할거).then((result) => {
+              console.log(result.id);
+              window.location.href = "/index.html"
+            }).catch((err) => {
+              console.log(err)
+            })
+          });
+        }
+      )
     })
 
   </script>
