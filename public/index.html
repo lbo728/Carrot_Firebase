@@ -32,9 +32,55 @@
       integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"
       integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">CarrotMarket</a>
+        <div class="ms-auto mx-2" id="userName">로그인이 필요합니다.</div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="upload.html">Upload</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="login.html">Login</a>
+            </li>
+            <li class="nav-item" id="logout">
+              <a class="nav-link">Logout</a>
+            </li>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Product Card List -->
+    <div class="container mt-3">
+    </div>
+    
     <script>
       const db = firebase.firestore();
       // console.log(db.data);
+
+      // 유저정보 확인
+      var 뺀거 = localStorage.getItem('user')
+      if (뺀거 !== null) {
+        $('#userName').html(JSON.parse(뺀거).displayName);
+      }
+
+      // 로그아웃
+      $('#logout').click(function () {
+        firebase.auth().signOut()
+        localStorage.removeItem('user')
+      })
+
+
       db.collection('product').get().then((결과)=>{
         결과.forEach((doc)=>{
           console.log(doc.data())
@@ -56,30 +102,6 @@
         })
       })
     </script>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="index.html">CarrotMarket</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="index.html">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="upload.html">Upload</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="login.html">Login</a>
-            </li>
-        </div>
-      </div>
-    </nav>
-    <!-- Product Card List -->
-    <div class="container mt-3">
-    </div>
+   
   </body>
 </html>

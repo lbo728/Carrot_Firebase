@@ -46,6 +46,7 @@
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
       <a class="navbar-brand" href="index.html">CarrotMarket</a>
+      <div class="ms-auto mx-2" id="userName">로그인이 필요합니다.</div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -90,9 +91,39 @@
     const db = firebase.firestore();
     const storage = firebase.storage();
 
+    // 유저정보 확인
+    var 뺀거 = localStorage.getItem('user')
+    if (뺀거 !== null) {
+      $('#userName').html(JSON.parse(뺀거).displayName);
+    }
+    
+    var 내uid = JSON.parse(localStorage.getItem('user')).uid
+
+    $('#chat').click(function () {
+      var 채팅정보 = {
+        product: 상품명,
+        date: new Date(),
+        who: [내uid, 판매자uid],
+      }
+      if (db.collection('chatroom').doc.who == null) {
+        db.collection('chatroom').add(채팅정보).then((result) => {
+          window.location.href = '/chatroom.html?id=' + 쿼리스트링.get('id')
+        })  
+      } else {
+        window.location.href = '/chatroom.html?id=' + 쿼리스트링.get('id')
+      }
+    })
+
+    var 판매자uid;
+    var 상품명;
+
     var 쿼리스트링 = new URLSearchParams(window.location.search);
 
     db.collection('product').doc(쿼리스트링.get('id')).get().then((result)=>{
+
+      판매자uid = result.data().uid;
+      상품명 = result.data().제목;
+
       console.log(result.data())
       var date = new dayjs(result.data().날짜.toDate()).format('YYYY년 MM월 DD일');
       
@@ -109,16 +140,7 @@
     })
 
 
-  $('#chat').click(function () {
-          var 채팅정보 = {
-            날짜: new Date(),
-            uid: JSON.parse(localStorage.getItem('user')).uid,
-          }
-          db.collection('chatroom').add(채팅정보).then((result) => {
-            console.log(result)
-            window.location.href = '/chatroom.html?id=' + 쿼리스트링.get('id')
-          })
-        });
+  
 
   </script>
 
